@@ -1,28 +1,29 @@
-name: CI
-
+#  GitHub Actions 的配置文件
+name: CI # 持续集成（Continuous Integration）的缩写
+# 推送或拉取master分支时
 on:
   push:
     branches: [master]
   pull_request:
     branches: [master]
-
+# 运行作业
 jobs:
   test:
-    name: 'Test'
-    runs-on: ubuntu-latest
+    name: 'Test' #作业名
+    runs-on: ubuntu-latest #环境
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [14.x, 16.x] # node版本要求
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2 #actions/checkout是一个库!!!@v2是一个版本
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.2
+        uses: pnpm/action-setup@v2.2.2 #也是一个库的指定版本
         with:
-          version: 7
+          version: 7 #这个是pnpm的版本号要求
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }} #用的前面matrix要求的node版本号
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
