@@ -42,9 +42,9 @@ type Unit =
 type UnitAnyCase = Unit | Uppercase<Unit> | Lowercase<Unit>;
 
 export type StringValue =
-  | `${number}`
-  | `${number}${UnitAnyCase}`
-  | `${number} ${UnitAnyCase}`;
+  | `${number}` // 表示数字组成的字符串
+  | `${number}${UnitAnyCase}` // 数字和UnitAnyCase类型拼接
+  | `${number} ${UnitAnyCase}`;// 数字，空格和UnitAnyCase类型拼接
 
 interface Options {
   /**
@@ -59,6 +59,11 @@ interface Options {
  * @param value - The string or number to convert
  * @param options - Options for the conversion
  * @throws Error if `value` is not a non-empty string or a number
+ */
+/**
+ * 这样定义重载函数的目的是为了提供更好的类型检查和类型推断，以便在不同的参数类型下，
+ * 编译器能够正确地确定函数的返回类型。实际执行时，只会使用最后一行的函数定义，即第三行的函数实现。
+ * 前两行的声明只是用于类型检查和编译时的类型推断，以提供更好的开发体验和类型安全性。
  */
 function msFn(value: StringValue, options?: Options): number;
 function msFn(value: number, options?: Options): string;
@@ -79,7 +84,7 @@ function msFn(value: StringValue | number, options?: Options): number | string {
 }
 
 /**
- * Parse the given string and return milliseconds.
+ * Parse the given string and return milliseconds.毫秒
  *
  * @param str - A string to parse to milliseconds
  * @returns The parsed value in milliseconds, or `NaN` if the string can't be
@@ -92,7 +97,9 @@ function parse(str: string): number {
   const match =
     /^(?<value>-?(?:\d+)?\.?\d+) *(?<type>milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
       str,
-    );
+    );// 匹配的字符串可以是"10ms"、"-1.5s"、"2 hours"等。
+  // 如果匹配成功，exec()方法将返回一个数组，其中第一个元素是整个匹配的字符串，后续元素是每个命名捕获组的匹配结果。如果匹配失败，exec()方法将返回null。
+  // 这段代码的目的是从字符串中提取数值和时间单位，以便后续的处理和转换。
   // Named capture groups need to be manually typed today.
   // https://github.com/microsoft/TypeScript/issues/32098
   const groups = match?.groups as { value: string; type?: string } | undefined;
